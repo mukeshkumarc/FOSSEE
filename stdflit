@@ -1,0 +1,40 @@
+/*
+ * stdflit.cpp
+ *
+ *  Created on: 19-Jan-2016
+ *      Author: mukesh_kumar
+ *
+ *      we can calculate stddev by calculating mean;
+ *      This link for calculation of std deviation using mean
+ *      https://en.wikipedia.org/wiki/Standard_deviation#Definition_of_population_values
+ *
+ *      void stdfilt(Mat source image ,Mat* final image){
+ *
+ *      }
+ *      after calculating std we have to normalize image ;
+ *
+ */
+#include <opencv2/opencv.hpp>
+#include <string.h>
+using namespace cv;
+
+void stdfilt(Mat src,Mat* dest){
+	Mat src32f;
+	src.convertTo(src32f,CV_32F);
+	Mat im_mean,im_mean2,unnomarlized;
+	blur(src32f,im_mean,Size(3,3));
+	blur(src32f.mul(src32f),im_mean2,Size(3,3));
+	cv::sqrt(im_mean2 - im_mean.mul(im_mean), unnomarlized);   //calculate std dev;
+	normalize(unnomarlized, *dest, 0.0, 1.0, NORM_MINMAX);     //normalize image
+	return;
+}
+
+int main(int argc, char **argv){
+	Mat src,dest;
+	src=imread(argv[1],0);                                //read image
+	stdfilt(src,&dest);                                   //call function
+	namedWindow("stdDev",WINDOW_AUTOSIZE);               //create new window
+	imshow("stdDev",dest);                               //showimage
+	waitKey();                                           //wait for key
+	return 0;
+}
